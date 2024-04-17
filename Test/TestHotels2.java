@@ -20,8 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 @RunWith(JUnitParamsRunner.class)
-
-public class TestHotels {
+public class TestHotels2 {
     private static WebDriver driver;
     private static final String HOTEL_URL = "https://www.getaroom.com/";
     //private static final String HOTEL_URL = "https://www.getaroom.com/search?amenities=&destination=Austin&page=1&per_page=25&rinfo=%5B%5B18%5D%5D&sort_order=position&hide_unavailable=true&check_in=2024-05-01&check_out=2024-05-02&property_name=";
@@ -45,10 +44,10 @@ public class TestHotels {
 
     @Test
     @Parameters({"Atlanta","Orlando","Sacramento","Miami","Austin"})
-    public void testHotelPrices(String location){
+    public void testHotelPrices(String location) {
         driver.get(HOTEL_URL);
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-        for(int i = 0; i < hotelDates.size(); i++){
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        for (int i = 0; i < hotelDates.size(); i++) {
             //driver.get(HOTEL_URL);
             //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(5));
 
@@ -75,11 +74,10 @@ public class TestHotels {
 
             //testHotelCards("Holiday Inn Express", checkIn, checkOut);
 
-
-
-            driver.getCurrentUrl();
+            //driver.getCurrentUrl();
             //WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(20));
             //wait.until(ExpectedConditions.urlMatches(driver.getCurrentUrl()));
+
 
 
             // search hotel name
@@ -89,34 +87,47 @@ public class TestHotels {
             inputHotel.submit();
 
             driver.getCurrentUrl();
-            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+            //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
 
 
             List<WebElement> cards = driver.findElements(By.className("hotel-card"));
-            for(int k = 0; k < cards.size(); k++){
-                // get  hotel name
-                // hotel price
-                // location
-                WebElement current = cards.get(k);
-                WebElement title = current.findElement(By.className("name"));
-                WebElement city = current.findElement(By.className("city"));
-                WebElement priceInfo = current.findElement(By.className("amount"));
+            WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(20));
+            wait.until(ExpectedConditions.urlContains("Holiday"));
+
+            for (int k = 0; k < cards.size(); k++) {
+                //WebDriverWait wait = new WebDriverWait(driver,Duration.ofSeconds(20));
+                //wait.until(ExpectedConditions.urlContains("Holiday"));
+
+
+                WebElement city = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#main-body > div > section > div > div > div > div > div > div.results-wrapper > div.results-list-wrapper > ul > li:nth-child(1) > div > div.details > div.title > button")));
+                //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+                //WebElement city = current.findElement(By.className("city"));
+                String cityName = city.getText();
+
+                WebElement title = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#main-body > div > section > div > div > div > div > div > div.results-wrapper > div.results-list-wrapper > ul > li:nth-child(1) > div > div.details > div.title > div.name > a")));
+                //WebElement title = current.findElement(By.className("name"));
+                String hotelName = title.getText();
+
+                //WebElement priceInfo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                WebElement priceInfo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("#main-body > div > section > div > div > div > div > div > div.results-wrapper > div.results-list-wrapper > ul > li:nth-child(1) > div > div.details > div.pricing > div.price > span.amount")));
+                //WebElement priceInfo = current.findElement(By.className("amount"));
+                String price = priceInfo.getText();
 
                 String timeStamp = (new Date()).toString();
                 //insertHotelPricesToDatabase(title.getText(),location, checkIn.getText(), checkOut.getText(), priceInfo.getText(), timeStamp);
 
-                System.out.println(title.getText());
-                //System.out.println(location);
-                System.out.println(city.getText());
+                System.out.println(hotelName);
+                System.out.println(cityName);
                 System.out.println(hotelDates.get(i).toString());
                 System.out.println(hotelDates.get(i).plusDays(1));
-                System.out.println(priceInfo.getText());
+                System.out.println(price);
                 System.out.println(timeStamp);
                 System.out.println();
             }
-        }
-    }
 
-    private void insertHotelPricesToDatabase(String title, String city, String checkIn, String checkOut, String price, String time){
+
+
+
+        }
     }
 }
