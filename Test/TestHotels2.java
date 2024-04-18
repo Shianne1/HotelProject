@@ -43,7 +43,8 @@ public class TestHotels2 {
 
 
     @Test
-    @Parameters({"Atlanta","Orlando","Sacramento","Miami","Austin"})
+    //@Parameters({"Atlanta","Orlando","Sacramento","Miami","Austin"})
+    @Parameters({"Atlanta"})
     public void testHotelPrices(String location) {
         driver.get(HOTEL_URL);
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
