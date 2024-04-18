@@ -1,5 +1,8 @@
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+@RunWith(JUnitParamsRunner.class)
 public class TestHotelCards {
     private static WebDriver driver;
     private static Connection connection;
@@ -37,7 +41,8 @@ public class TestHotelCards {
     }
 
     @Test
-    public void testAtlanta(){
+    @Parameters({"Holiday Inn","Hyatt Regency","Hilton","Comfort Suites","Hampton Inn & Suites"})
+    public void testAtlanta(String Hotels){
         driver.get("https://www.getaroom.com/search?amenities=&destination=Atlanta&page=1&per" +
                 "_page=25&rinfo=%5B%5B18%5D%5D&sort_order=position&hide_unavailable=true&check_in=2024-05-01&check_out=2024-05-02&property_name=");
 
@@ -63,23 +68,33 @@ public class TestHotelCards {
             WebElement searchHotels = driver.findElement(By.id("enter-travel-dates"));
             searchHotels.submit();
 
+            // search hotel name
+            WebElement inputHotel = driver.findElement(By.id("hotelName"));
+            //inputHotel.clear();
+            inputHotel.sendKeys(Hotels);
+            inputHotel.submit();
+
+
             List<WebElement> cards = driver.findElements(By.className("hotel-card"));
 
             for(int k = 0; k < cards.size(); k++){
                 try{
                     WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-                    //driver.get(driver.getCurrentUrl());
-                    WebElement city = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("name")));
-
+                    //wait.until(ExpectedConditions.urlContains("Holiday"));
+                    //WebElement city = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("name")));
+                    WebElement current = cards.get(k);
+                    //wait.until(ExpectedConditions.urlContains("Holiday"));
+                    driver.getCurrentUrl();
+                    WebElement city = current.findElement(By.className("city"));
                     String cityName = city.getText();
 
-                    WebElement title = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("city")));
-                    //WebElement title = current.findElement(By.className("name"));
+                    //WebElement title = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("city")));
+                    WebElement title = current.findElement(By.className("name"));
                     String hotelName = title.getText();
 
                     //WebElement priceInfo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
-                    WebElement priceInfo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
-                    //WebElement priceInfo = current.findElement(By.className("amount"));
+                    //WebElement priceInfo = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                    WebElement priceInfo = current.findElement(By.className("amount"));
                     String price = priceInfo.getText();
 
                     String timeStamp = (new Date()).toString();
