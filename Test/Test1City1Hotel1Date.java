@@ -42,15 +42,42 @@ public class Test1City1Hotel1Date {
         WebElement destination = driver.findElement(By.id("destination"));
         destination.clear();
         destination.sendKeys("Atlanta", Keys.ENTER);
-
-
+        helperMethodLoadURL();
     }
 
     private void helperMethodLoadURL(){
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.getCurrentUrl();
+        enterHotel();
 
-        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(20));
-        wait.until(ExpectedConditions.urlMatches(driver.getCurrentUrl()));
-
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.getCurrentUrl();
+        enterDates();
     }
+
+    private void enterHotel(){
+        WebElement inputHotel = driver.findElement(By.cssSelector("#hotelName"));
+        inputHotel.clear();
+        inputHotel.sendKeys("Holiday Inn", Keys.ENTER);
+    }
+
+    private void enterDates(){
+        WebElement checkIn = driver.findElement(By.cssSelector("#check_in"));
+        checkIn.clear();
+        checkIn.sendKeys(hotelDates.get(0).toString(), Keys.ENTER);
+
+        WebElement checkOut = driver.findElement(By.cssSelector("#check_out"));
+        checkOut.clear();
+        checkOut.sendKeys(hotelDates.get(0).plusDays(1).toString(), Keys.ENTER);
+    }
+
+    /*
+    https://www.getaroom.com/search?amenities=&destination=Atlanta&page=1&per_page=25&rinfo=%5B%5B18%5D%5D&sort_order=position&hide_unavailable=true&check_in=null&check_out=null&property_name=
+
+    https://www.getaroom.com/search?page=1&per_page=25&destination=Atlanta&rinfo=%5B%5B18%5D%5D&amenities=&sort_order=position&hide_unavailable=true&check_in=null&check_out=null&property_name=Hilton
+
+    https://www.getaroom.com/search?page=1&per_page=25&destination=Atlanta&rinfo=%5B%5B18%5D%5D&amenities=&sort_order=position&hide_unavailable=true&check_in=null&check_out=null&property_name=Holiday%20Inn
+
+
+     */
 }
