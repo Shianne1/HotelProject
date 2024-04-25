@@ -47,12 +47,18 @@ public class Test1City1Hotel1Date {
 
     private void helperMethodLoadURL(){
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        //driver.getCurrentUrl();
+        enterDates();
         driver.getCurrentUrl();
         enterHotel();
 
+        /*
         driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
         driver.getCurrentUrl();
-        enterDates();
+        enterHotel();
+
+         */
+
     }
 
     private void enterHotel(){
@@ -63,14 +69,24 @@ public class Test1City1Hotel1Date {
 
     private void enterDates(){
         WebElement checkIn = driver.findElement(By.cssSelector("#check_in"));
-        checkIn.clear();
-        checkIn.sendKeys(hotelDates.get(0).toString(), Keys.ENTER);
+        //checkIn.clear();
+        checkIn.sendKeys("05/01/2024");
+        checkIn.submit();
 
         WebElement checkOut = driver.findElement(By.cssSelector("#check_out"));
-        checkOut.clear();
-        checkOut.sendKeys(hotelDates.get(0).plusDays(1).toString(), Keys.ENTER);
+        //checkOut.clear();
+        checkOut.sendKeys("05/02/2024");
+        checkOut.submit();
+
+        WebElement search = driver.findElement(By.id("enter-travel-dates"));
+        search.click();
     }
 
+    private void grabHotelCards(){
+
+    }
+
+    
     /*
     https://www.getaroom.com/search?amenities=&destination=Atlanta&page=1&per_page=25&rinfo=%5B%5B18%5D%5D&sort_order=position&hide_unavailable=true&check_in=null&check_out=null&property_name=
 
