@@ -17,23 +17,20 @@ public class TestGetARoom {
     private final String[] hotelChains = {"Park Hyatt", "Holiday Inn", "Ritz", "Best Western", "Four Seasons"};
 
     @BeforeClass
-    public static void setUp()
-    {
+    public static void setUp() {
         driver = new ChromeDriver();
         driver.manage().window().setSize(new Dimension(WINDOW_WIDTH, WINDOW_HEIGHT));
     }
 
     @Test
-    public void testGetPrice()
-    {
+    public void testGetPrice() {
         String url = buildUrl("Paris", "Holiday Inn", "2024-05-01", 25, true);
         driver.get(url);
         WebElement price = driver.findElement(By.className("amount"));
         System.out.println("$" + price.getText());
     }
 
-    private String buildUrl(String city, String hotel, String strCheckIn)
-    {
+    private String buildUrl(String city, String hotel, String strCheckIn) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
         LocalDate checkIn = LocalDate.parse(strCheckIn);
         LocalDate checkOut = checkIn.plusDays(1);
@@ -49,8 +46,7 @@ public class TestGetARoom {
                 "&property_name=" + hotelFixed;
     }
 
-    private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice)
-    {
+    private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
         LocalDate checkIn = LocalDate.parse(strCheckIn);
         LocalDate checkOut = checkIn.plusDays(1);
 

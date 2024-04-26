@@ -4,6 +4,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -19,7 +20,7 @@ import java.util.List;
 
 public class Test1City1Hotel1Date {
     private static WebDriver driver;
-    private static final String GET_A_ROOM = "https://www.getaroom.com/";
+    private static final String GET_A_ROOM = "https://www.getaroom.com/search?";
     private static Connection connection;
     private static String DB_URL = "jdbc:sqlite:hotelcheckin.sqlite";
 
@@ -28,7 +29,8 @@ public class Test1City1Hotel1Date {
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
-        driver = new FirefoxDriver();
+        //driver = new FirefoxDriver();
+        driver = new ChromeDriver();
         LocalDate startDate = LocalDate.of(2024,5,1);
         LocalDate endDate = LocalDate.of(2024,5,2);
         while(startDate.isBefore(endDate)){
@@ -84,8 +86,8 @@ public class Test1City1Hotel1Date {
         checkOut.sendKeys("05/02/2024", Keys.ENTER);
         checkOut.submit();
 
-        WebElement searchHotels = driver.findElement(By.id("enter-travel-dates"));
-        searchHotels.click();
+        //WebElement searchHotels = driver.findElement(By.id("enter-travel-dates"));
+        //searchHotels.click();
         //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
         //driver.getCurrentUrl();
         //enterHotel();
