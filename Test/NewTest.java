@@ -23,6 +23,8 @@ public class NewTest {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static String DB_URL = "jdbc:sqlite:hotelcheckin.sqlite";
     private static List<LocalDate> hotelDates = new ArrayList<>();
+    private final String[] cities = {"Washington DC", "Tokyo", "Chicago", "Paris", "New York City"};
+    private final String[] hotelChains = {"Park Hyatt", "Holiday Inn", "Ritz", "Best Western", "Four Seasons"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
@@ -39,11 +41,16 @@ public class NewTest {
 
     @Test
     public void testGetPrice() {
-        for(int i = 0; i < hotelDates.size(); i++){
-            String url = buildUrl("Paris", "Holiday Inn", hotelDates.get(i).toString(), 25, true);
-            driver.get(url);
-            WebElement price = driver.findElement(By.className("amount"));
-            System.out.println("$" + price.getText());
+        for(int j = 0; j < cities.length; j++) {
+            for (int k = 0; k < hotelChains.length; k++) {
+                for (int i = 0; i < hotelDates.size(); i++) {
+                    String url = buildUrl(cities[j], hotelChains[k], hotelDates.get(i).toString(), 25, true);
+                    driver.get(url);
+                    WebElement price = driver.findElement(By.className("amount"));
+                    System.out.println(cities[i] + " - " + hotelChains[k] + " - " + "$" + price.getText());
+                    System.out.println();
+                }
+            }
         }
     }
 
