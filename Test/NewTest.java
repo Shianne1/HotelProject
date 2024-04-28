@@ -16,6 +16,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+@RunWith(JUnitParamsRunner.class)
+
 public class NewTest {
     private static WebDriver driver;
     private static Connection connection;
@@ -32,7 +34,7 @@ public class NewTest {
         //driver = new FirefoxDriver();
         driver = new ChromeDriver();
         LocalDate startDate = LocalDate.of(2024, 5, 1);
-        LocalDate endDate = LocalDate.of(2024, 5, 5);
+        LocalDate endDate = LocalDate.of(2024, 5, 31);
         while (startDate.isBefore(endDate)) {
             hotelDates.add(startDate);
             startDate = startDate.plusDays(1);
@@ -40,21 +42,18 @@ public class NewTest {
     }
 
     @Test
-    public void testGetPrice() {
-        for(int j = 0; j < cities.length; j++) {
-            for (int k = 0; k < hotelChains.length; k++) {
-                for (int i = 0; i < hotelDates.size(); i++) {
-                    String url = buildUrl(cities[j], hotelChains[k], hotelDates.get(i).toString(), 25, true);
-                    driver.get(url);
-                    WebElement price = driver.findElement(By.className("amount"));
-                    System.out.println(cities[i] + " - " + hotelChains[k] + " - " + "$" + price.getText());
-                    System.out.println();
-                }
-            }
+    @Parameters({"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"})
+    public void testGetPrice(String location) {
+        for (int i = 0; i < hotelDates.size(); i++) {
+                //String url = buildUrl("Atlanta","Holiday Inn", hotelDates.get(i).toString(), 25, true);
+                String url = buildUrl(location, "Holiday Inn", hotelDates.get(i).toString(), 25, true);
+                driver.get(url);
+                WebElement price = driver.findElement(By.className("amount"));
+                System.out.println(location + " - " + "Holiday Inn" + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                System.out.println();
         }
     }
-
-
+    
 
     private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
         LocalDate checkIn = LocalDate.parse(strCheckIn);
