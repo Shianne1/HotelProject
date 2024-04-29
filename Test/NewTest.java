@@ -25,13 +25,11 @@ public class NewTest {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static String DB_URL = "jdbc:sqlite:hotelcheckin.sqlite";
     private static List<LocalDate> hotelDates = new ArrayList<>();
-    private final String[] cities = {"Washington DC", "Tokyo", "Chicago", "Paris", "New York City"};
-    private final String[] hotelChains = {"Park Hyatt", "Holiday Inn", "Ritz", "Best Western", "Four Seasons"};
+    private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn & Suites"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
-        //driver = new FirefoxDriver();
         driver = new ChromeDriver();
         LocalDate startDate = LocalDate.of(2024, 5, 1);
         LocalDate endDate = LocalDate.of(2024, 5, 31);
@@ -44,16 +42,57 @@ public class NewTest {
     @Test
     @Parameters({"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"})
     public void testGetPrice(String location) {
-        for (int i = 0; i < hotelDates.size(); i++) {
-                //String url = buildUrl("Atlanta","Holiday Inn", hotelDates.get(i).toString(), 25, true);
-                String url = buildUrl(location, "Holiday Inn", hotelDates.get(i).toString(), 25, true);
+        for(int k = 0; k < hotelChains.length; k ++) {
+            for (int i = 0; i < hotelDates.size(); i++) {
+                String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
                 driver.get(url);
                 WebElement price = driver.findElement(By.className("amount"));
-                System.out.println(location + " - " + "Holiday Inn" + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                //WebElement price = driver.findElement(By.cssSelector("#amount"));
+                System.out.println(location + " - " + hotelChains[k].toString() + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
                 System.out.println();
+            }
         }
     }
-    
+
+    private void getHotel(String hotel){
+        int hotelNumber = 5;
+        String hotelName;
+
+        // Switch statement with int data type
+        switch (hotelNumber) {
+
+            // Case
+            case 1:
+                hotelName = "Holiday Inn";
+                break;
+
+            // Case
+            case 2:
+                hotelName = "Hyatt Regency";
+                break;
+
+            // Case
+            case 3:
+                hotelName = "Hilton";
+                break;
+
+            // Case
+            case 4:
+                hotelName = "Comfort Suites";
+                break;
+
+            // Case
+            case 5:
+                hotelName = "Hampton Inn & Suites";
+                break;
+
+            // Default case
+            default:
+                hotelName = "Invalid Hotel";
+        }
+
+
+    }
 
     private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
         LocalDate checkIn = LocalDate.parse(strCheckIn);
