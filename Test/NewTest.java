@@ -72,11 +72,11 @@ public class NewTest {
                 //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
                 driver.get(url);
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
-                if(!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("results_list_lowest_price"))).isEnabled()){
+               // WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled()){
                     hotelDates.get(i + 1);
                 } else {
-                   // WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                    WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                     WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
                     System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
                     System.out.println();
