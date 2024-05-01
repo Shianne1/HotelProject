@@ -30,6 +30,8 @@ public class NewTest {
     private static List<LocalDate> hotelDates = new ArrayList<>();
     private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"};
 
+    private final String[] cities = {"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"};
+
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
@@ -45,20 +47,34 @@ public class NewTest {
     @Test
     @Parameters({"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"})
     public void testGetPrice(String location) {
-        /*
         for(int k = 0; k < hotelChains.length; k ++) {
             for (int i = 0; i < hotelDates.size(); i++) {
                 String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
                 driver.get(url);
-                WebElement price = driver.findElement(By.className("amount"));
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
                 //WebElement price = driver.findElement(By.cssSelector("#amount"));
                 System.out.println(location + " - " + hotelChains[k].toString() + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
                 System.out.println();
             }
         }
 
-         */
-        getHotel(location);
+    }
+
+    @Test
+    @Parameters({"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"})
+    public void testGetHotelPrice(String hotels){
+        for(int k = 0; k < cities.length; k ++) {
+            for (int i = 0; i < hotelDates.size(); i++) {
+                String url = buildUrl(cities[k].toString(), hotels , hotelDates.get(i).toString(), 25, true);
+                driver.get(url);
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                //WebElement price = driver.findElement(By.cssSelector("#amount"));
+                System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                System.out.println();
+            }
+        }
     }
 
     private void getHotel(String location){
