@@ -7,6 +7,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -30,12 +31,13 @@ public class NewTest {
     private static List<LocalDate> hotelDates = new ArrayList<>();
     private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"};
 
-    private final String[] cities = {"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"};
+    private final String[] cities = {"Sacramento", "Atlanta", "Orlando", "Miami", "Austin"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
-        driver = new ChromeDriver();
+        //driver = new ChromeDriver();
+        driver = new FirefoxDriver();
         LocalDate startDate = LocalDate.of(2024, 5, 1);
         LocalDate endDate = LocalDate.of(2024, 5, 31);
         while (startDate.isBefore(endDate)) {
@@ -62,17 +64,32 @@ public class NewTest {
     }
 
     @Test
-    @Parameters({"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"})
+    @Parameters({"Hyatt Regency", "Hilton", "Hampton Inn", "Holiday Inn", "Comfort Suites" })
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
             for (int i = 0; i < hotelDates.size(); i++) {
                 String url = buildUrl(cities[k].toString(), hotels , hotelDates.get(i).toString(), 25, true);
+                //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
                 driver.get(url);
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                if(!wait.until(ExpectedConditions.visibilityOfElementLocated(By.id("results_list_lowest_price"))).isEnabled()){
+                    hotelDates.get(i + 1);
+                } else {
+                   // WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                    WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                    System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                    System.out.println();
+                }
+                /*
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                 WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+
                 //WebElement price = driver.findElement(By.cssSelector("#amount"));
                 System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
                 System.out.println();
+
+                 */
             }
         }
     }
