@@ -7,10 +7,13 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -25,7 +28,7 @@ public class NewTest {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static String DB_URL = "jdbc:sqlite:hotelcheckin.sqlite";
     private static List<LocalDate> hotelDates = new ArrayList<>();
-    private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn & Suites"};
+    private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
@@ -42,6 +45,7 @@ public class NewTest {
     @Test
     @Parameters({"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"})
     public void testGetPrice(String location) {
+        /*
         for(int k = 0; k < hotelChains.length; k ++) {
             for (int i = 0; i < hotelDates.size(); i++) {
                 String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
@@ -52,46 +56,26 @@ public class NewTest {
                 System.out.println();
             }
         }
+
+         */
+        getHotel(location);
     }
 
-    private void getHotel(String hotel){
-        int hotelNumber = 5;
-        String hotelName;
+    private void getHotel(String location){
+        for(int k = 0; k < hotelChains.length; k ++) {
+            for (int i = 0; i < hotelDates.size(); i++) {
+                String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
+                driver.get(url);
+               // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+               // WebElement price = driver.findElement(By.className("amount"));
 
-        // Switch statement with int data type
-        switch (hotelNumber) {
-
-            // Case
-            case 1:
-                hotelName = "Holiday Inn";
-                break;
-
-            // Case
-            case 2:
-                hotelName = "Hyatt Regency";
-                break;
-
-            // Case
-            case 3:
-                hotelName = "Hilton";
-                break;
-
-            // Case
-            case 4:
-                hotelName = "Comfort Suites";
-                break;
-
-            // Case
-            case 5:
-                hotelName = "Hampton Inn & Suites";
-                break;
-
-            // Default case
-            default:
-                hotelName = "Invalid Hotel";
+                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
+                WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                //WebElement price = driver.findElement(By.cssSelector("#amount"));
+                System.out.println(location + " - " + hotelChains[k].toString() + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                System.out.println();
+            }
         }
-
-
     }
 
     private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
