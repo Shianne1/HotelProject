@@ -38,7 +38,7 @@ public class NewTest {
         connection = DriverManager.getConnection(DB_URL);
         //driver = new ChromeDriver();
         driver = new FirefoxDriver();
-        LocalDate startDate = LocalDate.of(2024, 5, 1);
+        LocalDate startDate = LocalDate.of(2024, 5, 5);
         LocalDate endDate = LocalDate.of(2024, 5, 31);
         while (startDate.isBefore(endDate)) {
             hotelDates.add(startDate);
@@ -71,7 +71,7 @@ public class NewTest {
                 String url = buildUrl(cities[k].toString(), hotels , hotelDates.get(i).toString(), 25, true);
                 //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
                 driver.get(url);
-                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+                driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
                 //WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                 if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled() || driver.getTitle().contains("gateway")){
                     hotelDates.get(i).plusDays(1);
@@ -82,6 +82,26 @@ public class NewTest {
                     System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
                     System.out.println();
                 }
+            }
+        }
+    }
+
+    private void getHotel(String cities, String hotels){
+        for (int i = 0; i < hotelDates.size(); i++) {
+            String url = buildUrl(cities, hotels , hotelDates.get(i).toString(), 25, true);
+            //driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+            driver.get(url);
+            driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
+            //WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+            if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled() || driver.getTitle().contains("gateway")){
+                hotelDates.get(i).plusDays(1);
+            } else {
+                // WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+                //WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
+                WebElement price = driver.findElement(By.className("amount"));
+                System.out.println(cities + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                System.out.println();
+            }
                 /*
                 WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
                 WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
@@ -91,24 +111,6 @@ public class NewTest {
                 System.out.println();
 
                  */
-            }
-        }
-    }
-
-    private void getHotel(String location){
-        for(int k = 0; k < hotelChains.length; k ++) {
-            for (int i = 0; i < hotelDates.size(); i++) {
-                String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
-                driver.get(url);
-               // driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(20));
-               // WebElement price = driver.findElement(By.className("amount"));
-
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-                WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
-                //WebElement price = driver.findElement(By.cssSelector("#amount"));
-                System.out.println(location + " - " + hotelChains[k].toString() + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
-                System.out.println();
-            }
         }
     }
 
