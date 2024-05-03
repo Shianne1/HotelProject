@@ -8,10 +8,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -36,6 +33,11 @@ public class NewTest {
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
         driver = new FirefoxDriver();
+
+        String deleteSQL = "DELETE FROM test";
+        PreparedStatement ds = connection.prepareStatement(deleteSQL);
+        ds.executeUpdate();
+
         LocalDate startDate = LocalDate.of(2024, 5, 5);
         LocalDate endDate = LocalDate.of(2024, 5, 31);
         while (startDate.isBefore(endDate)) {
@@ -43,28 +45,6 @@ public class NewTest {
             startDate = startDate.plusDays(1);
         }
     }
-
-    /*
-
-    @Test
-    @Parameters({"Atlanta", "Orlando", "Sacramento", "Miami", "Austin"})
-
-    public void testGetPrice(String location) {
-        for(int k = 0; k < hotelChains.length; k ++) {
-            for (int i = 0; i < hotelDates.size(); i++) {
-                String url = buildUrl(location, hotelChains[k].toString() , hotelDates.get(i).toString(), 25, true);
-                driver.get(url);
-                WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(30));
-                WebElement price = wait.until(ExpectedConditions.visibilityOfElementLocated(By.className("amount")));
-                //WebElement price = driver.findElement(By.cssSelector("#amount"));
-                System.out.println(location + " - " + hotelChains[k].toString() + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
-                System.out.println();
-            }
-        }
-
-    }
-
-     */
 
     @Test
     @Parameters({"Hilton", "Hyatt Regency", "Hampton Inn", "Holiday Inn", "Comfort Suites" })
@@ -78,8 +58,8 @@ public class NewTest {
                     hotelDates.get(i).plusDays(1);
                 } else {
                     WebElement price = driver.findElement(By.className("amount"));
-                    System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
-                    System.out.println();
+                    //System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
+                    //System.out.println();
 
                     String timeStamp = (new Date()).toString();
                     insertHotelPricesToDatabase(hotels, cities[k].toString(), hotelDates.get(i).toString(), price.getText(), timeStamp);
@@ -98,11 +78,34 @@ public class NewTest {
             ps.setString(4,price);
             ps.setString(5,time);
             ps.executeUpdate();
+            //findCheapestHotel(hotels, city);
 
         } catch (SQLException e){
             e.printStackTrace();
         }
     }
+
+    private void findCheapestHotel(String hotels, String city){
+        String query = "SELECT * FROM test WHERE city = ? AND hotel = ? ORDER BY price ASC LIMIT 10";
+        try{
+            PreparedStatement ps = connection.prepareStatement(query);
+            ps.setString(1,hotels);
+            ps.setString(2,city);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                String cheapHotel = rs.getString("");
+                String cheapCity = rs.getString("");
+                String cheapDate = rs.getString("");
+                String cheapPrice = rs.getString("");
+                System.out.println("Cheapest hotels in " + cheapCity + " is " + cheapHotel + " - " + cheapPrice + " on " + cheapDate);
+            }
+        } catch (SQLException e){
+            e.printStackTrace();
+        }
+
+    }
+
+
 
     private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
         LocalDate checkIn = LocalDate.parse(strCheckIn);
