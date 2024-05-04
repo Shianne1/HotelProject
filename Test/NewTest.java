@@ -6,6 +6,7 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.sql.*;
@@ -33,13 +34,17 @@ public class NewTest {
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
         driver = new FirefoxDriver();
+        //driver = new ChromeDriver();
 
+        /*
         String deleteSQL = "DELETE FROM test";
         PreparedStatement ds = connection.prepareStatement(deleteSQL);
         ds.executeUpdate();
+        
+         */
 
-        LocalDate startDate = LocalDate.of(2024, 5, 5);
-        LocalDate endDate = LocalDate.of(2024, 5, 31);
+        LocalDate startDate = LocalDate.of(2024, 5, 7);
+        LocalDate endDate = LocalDate.of(2024, 12, 31);
         while (startDate.isBefore(endDate)) {
             hotelDates.add(startDate);
             startDate = startDate.plusDays(1);
@@ -47,14 +52,15 @@ public class NewTest {
     }
 
     @Test
-    @Parameters({"Hilton", "Hyatt Regency", "Hampton Inn", "Holiday Inn", "Comfort Suites" })
+    @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
+    //@Parameters({"Comfort Suites" })
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
             for (int i = 0; i < hotelDates.size(); i++) {
                 String url = buildUrl(cities[k].toString(), hotels , hotelDates.get(i).toString(), 25, true);
                 driver.get(url);
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-                if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled() || driver.getTitle().contains("gateway")){
+                if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled() /*|| driver.getTitle().contains("gateway")*/){
                     hotelDates.get(i).plusDays(1);
                 } else {
                     WebElement price = driver.findElement(By.className("amount"));
@@ -66,6 +72,7 @@ public class NewTest {
                 }
             }
         }
+
     }
 
     private void insertHotelPricesToDatabase (String hotels, String city, String date, String price, String time){
@@ -85,12 +92,19 @@ public class NewTest {
         }
     }
 
-    private void findCheapestHotel(String hotels, String city){
-        String query = "SELECT * FROM test WHERE city = ? AND hotel = ? ORDER BY price ASC LIMIT 10";
+    @Test
+    @Parameters({"Sacramento", "Atlanta", "Orlando", "Miami", "Austin"})
+    public void findCheapestHotel(String city){
+        //String query = "SELECT * FROM test WHERE city = ? AND hotel = ? ORDER BY price ASC LIMIT 10";
+        String query = "SELECT * FROM test WHERE city = ? ORDER BY price ASC LIMIT 10";
         try{
             PreparedStatement ps = connection.prepareStatement(query);
+            /*
             ps.setString(1,hotels);
             ps.setString(2,city);
+
+             */
+            ps.setString(1,city);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
                 String cheapHotel = rs.getString("");
