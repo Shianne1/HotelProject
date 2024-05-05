@@ -1,6 +1,7 @@
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
@@ -52,7 +53,8 @@ public class NewTest {
     }
 
     @Test
-    @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
+    //@Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
+    @Parameters({"Hyatt Regency", "Hampton Inn"})
     //@Parameters({"Comfort Suites" })
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
@@ -91,6 +93,19 @@ public class NewTest {
             e.printStackTrace();
         }
     }
+
+    @Test
+    @Ignore
+    public void deleteHyattAndHampton(){
+        String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' OR hotel = 'Hampton Inn'";
+        try {
+            PreparedStatement ds = connection.prepareStatement(deleteSQL);
+            ds.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     @Test
     @Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
