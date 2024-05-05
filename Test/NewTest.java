@@ -54,7 +54,7 @@ public class NewTest {
 
     @Test
     //@Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
-    @Parameters({"Hyatt Regency", "Hampton Inn"})
+    @Parameters({"Hampton Inn", "Hyatt Regency"})
     //@Parameters({"Comfort Suites" })
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
@@ -100,7 +100,8 @@ public class NewTest {
         String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' OR hotel = 'Hampton Inn'";
         try {
             PreparedStatement ds = connection.prepareStatement(deleteSQL);
-            ds.executeUpdate();
+            int rowsAffected = ds.executeUpdate();
+            System.out.println("Rows deleted: " + rowsAffected);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -108,7 +109,8 @@ public class NewTest {
 
 
     @Test
-    @Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
+    //@Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
+    @Parameters({"Hampton Inn"})
     public void findCheapestHotel(String hotel){
         for(int k = 0; k < cities.length; k ++) {
             //String query = "SELECT * FROM test WHERE hotel = ? AND city = ? ORDER BY price ASC LIMIT 10";
