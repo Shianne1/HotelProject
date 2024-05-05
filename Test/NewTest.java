@@ -95,21 +95,26 @@ public class NewTest {
     @Test
     @Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
     public void findCheapestHotel(String hotel){
-        //String query = "SELECT * FROM test WHERE city = ? AND hotel = ? ORDER BY price ASC LIMIT 10";
-        String query = "SELECT * FROM test WHERE hotel = ? ORDER BY price ASC LIMIT 10";
-        try{
-            PreparedStatement ps = connection.prepareStatement(query);
-            ps.setString(1,hotel);
-            ResultSet rs = ps.executeQuery();
-            if(rs.next()){
-                String cheapHotel = rs.getString("hotel");
-                String cheapCity = rs.getString("city");
-                String cheapDate = rs.getString("date");
-                String cheapPrice = rs.getString("price");
-                System.out.println("Cheapest hotels in " + cheapCity + " is " + cheapHotel + " - " + cheapPrice + " on " + cheapDate);
+        for(int k = 0; k < cities.length; k ++) {
+            //String query = "SELECT * FROM test WHERE hotel = ? AND city = ? ORDER BY price ASC LIMIT 10";
+            //String query = "SELECT * FROM test WHERE hotel = ? ORDER BY price ASC LIMIT 10";
+            String query = "WITH RankedPrices AS (SELECT date, hotel, city, price, ROW_NUMBER() OVER (PARTITION BY hotel, city ORDER BY price ASC) AS price_rank FROM test WHERE hotel = ? AND city = ?)  SELECT date, hotel, city, price FROM RankedPrices WHERE price_rank <= 10 ";
+
+            try {
+                PreparedStatement ps = connection.prepareStatement(query);
+                ps.setString(1, hotel);
+                ps.setString(2, cities[k].toString());
+                ResultSet rs = ps.executeQuery();
+                while (rs.next()) {
+                    String cheapHotel = rs.getString("hotel");
+                    String cheapCity = rs.getString("city");
+                    String cheapDate = rs.getString("date");
+                    String cheapPrice = rs.getString("price");
+                    System.out.println("Cheapest hotels in " + cheapCity + " is " + cheapHotel + " - " + cheapPrice + " on " + cheapDate);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-        } catch (SQLException e){
-            e.printStackTrace();
         }
 
     }
