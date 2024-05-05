@@ -40,7 +40,7 @@ public class NewTest {
         String deleteSQL = "DELETE FROM test";
         PreparedStatement ds = connection.prepareStatement(deleteSQL);
         ds.executeUpdate();
-        
+
          */
 
         LocalDate startDate = LocalDate.of(2024, 5, 7);
@@ -93,24 +93,19 @@ public class NewTest {
     }
 
     @Test
-    @Parameters({"Sacramento", "Atlanta", "Orlando", "Miami", "Austin"})
-    public void findCheapestHotel(String city){
+    @Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
+    public void findCheapestHotel(String hotel){
         //String query = "SELECT * FROM test WHERE city = ? AND hotel = ? ORDER BY price ASC LIMIT 10";
-        String query = "SELECT * FROM test WHERE city = ? ORDER BY price ASC LIMIT 10";
+        String query = "SELECT * FROM test WHERE hotel = ? ORDER BY price ASC LIMIT 10";
         try{
             PreparedStatement ps = connection.prepareStatement(query);
-            /*
-            ps.setString(1,hotels);
-            ps.setString(2,city);
-
-             */
-            ps.setString(1,city);
+            ps.setString(1,hotel);
             ResultSet rs = ps.executeQuery();
             if(rs.next()){
-                String cheapHotel = rs.getString("");
-                String cheapCity = rs.getString("");
-                String cheapDate = rs.getString("");
-                String cheapPrice = rs.getString("");
+                String cheapHotel = rs.getString("hotel");
+                String cheapCity = rs.getString("city");
+                String cheapDate = rs.getString("date");
+                String cheapPrice = rs.getString("price");
                 System.out.println("Cheapest hotels in " + cheapCity + " is " + cheapHotel + " - " + cheapPrice + " on " + cheapDate);
             }
         } catch (SQLException e){
