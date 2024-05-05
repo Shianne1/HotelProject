@@ -29,7 +29,7 @@ public class NewTest {
     private static List<LocalDate> hotelDates = new ArrayList<>();
     //private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"};
 
-    private final String[] cities = {"Sacramento", "Atlanta", "Orlando", "Miami", "Austin"};
+    private final String[] cities = {/*"Sacramento", "Orlando", "Miami", "Austin", */"Atlanta"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
@@ -54,7 +54,7 @@ public class NewTest {
 
     @Test
     //@Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
-    @Parameters({"Hampton Inn", "Hyatt Regency"})
+    @Parameters({"Hyatt Regency"})
     //@Parameters({"Comfort Suites" })
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
@@ -97,7 +97,7 @@ public class NewTest {
     @Test
     @Ignore
     public void deleteHyattAndHampton(){
-        String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' OR hotel = 'Hampton Inn'";
+        String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' AND city = 'Orlando'/*OR hotel = 'Hampton Inn'*/";
         try {
             PreparedStatement ds = connection.prepareStatement(deleteSQL);
             int rowsAffected = ds.executeUpdate();
