@@ -29,11 +29,19 @@ public class NewTest {
 
     private final String[] cities = {"Sacramento", "Orlando", "Miami", "Austin", "Atlanta"};
 
+
+    /**
+     * This will call onto the database and driver.
+     * This will also make the list of dates that are needed for the search.
+     * @throws SQLException
+     */
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
         driver = new FirefoxDriver();
 
+        // This was made to delete all records because my internet was bad and the website was bad,
+        // that I didn't want any records in there that was going to make it worse.
         /*
         String deleteSQL = "DELETE FROM test";
         PreparedStatement ds = connection.prepareStatement(deleteSQL);
@@ -49,6 +57,12 @@ public class NewTest {
         }
     }
 
+
+    /**
+     * This will test to see if it can grab the price of the hotel and put it into a database.
+     * Had to you a bypass to make the test work because the website will sometimes give out dead spots.
+     * @param hotels
+     */
     @Test
     @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
     public void testGetHotelPrice(String hotels){
@@ -69,6 +83,15 @@ public class NewTest {
 
     }
 
+
+    /**
+     * This will allow for the data that is being taken from the website, and put it into the database.
+     * @param hotels
+     * @param city
+     * @param date
+     * @param price
+     * @param time
+     */
     private void insertHotelPricesToDatabase (String hotels, String city, String date, String price, String time){
         String sql = "insert into test values (null,?,?,?,?,?)";
         try {
@@ -85,6 +108,12 @@ public class NewTest {
         }
     }
 
+
+    /**
+     * This will delete from the database that had the hotels Hyatt Regency and Hampton Inn.
+     * This was made because I kept getting errors within these 2 hotels due to bad internet and poor website.
+     * It is ignored because it doesn't need to be called unless there is an error with those two.
+     */
     @Test
     @Ignore
     public void deleteHyattAndHampton(){
@@ -99,6 +128,10 @@ public class NewTest {
     }
 
 
+    /**
+     * This will filter out the 10 cheapest prices from each hotel and city from database.
+     * @param hotel
+     */
     @Test
     @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
     public void findCheapestHotel(String hotel){
@@ -125,7 +158,15 @@ public class NewTest {
     }
 
 
-
+    /**
+     * This will build the url that is needed when searching for the hotels and their prices.
+     * @param city
+     * @param hotel
+     * @param strCheckIn
+     * @param per_page
+     * @param sortByPrice
+     * @return
+     */
     private String buildUrl(String city, String hotel, String strCheckIn, int per_page, boolean sortByPrice) {
         LocalDate checkIn = LocalDate.parse(strCheckIn);
         LocalDate checkOut = checkIn.plusDays(1);
