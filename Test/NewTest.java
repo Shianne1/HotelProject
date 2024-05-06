@@ -7,7 +7,6 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 import java.sql.*;
@@ -27,15 +26,13 @@ public class NewTest {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_PATTERN);
     private static String DB_URL = "jdbc:sqlite:tester.sqlite";
     private static List<LocalDate> hotelDates = new ArrayList<>();
-    //private final String[] hotelChains = {"Holiday Inn", "Hyatt Regency", "Hilton", "Comfort Suites", "Hampton Inn"};
 
-    private final String[] cities = {/*"Sacramento", "Orlando", "Miami", "Austin", */"Atlanta"};
+    private final String[] cities = {"Sacramento", "Orlando", "Miami", "Austin", "Atlanta"};
 
     @BeforeClass
     public static void setUp() throws SQLException {
         connection = DriverManager.getConnection(DB_URL);
         driver = new FirefoxDriver();
-        //driver = new ChromeDriver();
 
         /*
         String deleteSQL = "DELETE FROM test";
@@ -53,22 +50,17 @@ public class NewTest {
     }
 
     @Test
-    //@Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
-    @Parameters({"Hyatt Regency"})
-    //@Parameters({"Comfort Suites" })
+    @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
     public void testGetHotelPrice(String hotels){
         for(int k = 0; k < cities.length; k ++) {
             for (int i = 0; i < hotelDates.size(); i++) {
                 String url = buildUrl(cities[k].toString(), hotels , hotelDates.get(i).toString(), 25, true);
                 driver.get(url);
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
-                if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled() /*|| driver.getTitle().contains("gateway")*/){
+                if(!driver.findElement(By.id("results_list_lowest_price")).isEnabled()){
                     hotelDates.get(i).plusDays(1);
                 } else {
                     WebElement price = driver.findElement(By.className("amount"));
-                    //System.out.println(cities[k].toString() + " - " + hotels + " - " + hotelDates.get(i).toString() + " - $" + price.getText());
-                    //System.out.println();
-
                     String timeStamp = (new Date()).toString();
                     insertHotelPricesToDatabase(hotels, cities[k].toString(), hotelDates.get(i).toString(), price.getText(), timeStamp);
                 }
@@ -87,7 +79,6 @@ public class NewTest {
             ps.setString(4,price);
             ps.setString(5,time);
             ps.executeUpdate();
-            //findCheapestHotel(hotels, city);
 
         } catch (SQLException e){
             e.printStackTrace();
@@ -97,7 +88,7 @@ public class NewTest {
     @Test
     @Ignore
     public void deleteHyattAndHampton(){
-        String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' AND city = 'Orlando'/*OR hotel = 'Hampton Inn'*/";
+        String deleteSQL = "DELETE FROM test WHERE hotel = 'Hyatt Regency' OR hotel = 'Hampton Inn'";
         try {
             PreparedStatement ds = connection.prepareStatement(deleteSQL);
             int rowsAffected = ds.executeUpdate();
@@ -109,12 +100,9 @@ public class NewTest {
 
 
     @Test
-    //@Parameters({"Hilton", "Comfort Suites", "Holiday Inn"})
-    @Parameters({"Hampton Inn"})
+    @Parameters({"Hilton", "Hyatt Regency", "Comfort Suites", "Hampton Inn", "Holiday Inn"})
     public void findCheapestHotel(String hotel){
         for(int k = 0; k < cities.length; k ++) {
-            //String query = "SELECT * FROM test WHERE hotel = ? AND city = ? ORDER BY price ASC LIMIT 10";
-            //String query = "SELECT * FROM test WHERE hotel = ? ORDER BY price ASC LIMIT 10";
             String query = "WITH RankedPrices AS (SELECT date, hotel, city, price, ROW_NUMBER() OVER (PARTITION BY hotel, city ORDER BY price ASC) AS price_rank FROM test WHERE hotel = ? AND city = ?)  SELECT date, hotel, city, price FROM RankedPrices WHERE price_rank <= 10 ";
 
             try {
@@ -127,7 +115,7 @@ public class NewTest {
                     String cheapCity = rs.getString("city");
                     String cheapDate = rs.getString("date");
                     String cheapPrice = rs.getString("price");
-                    System.out.println("Cheapest hotels in " + cheapCity + " is " + cheapHotel + " - " + cheapPrice + " on " + cheapDate);
+                    System.out.println(cheapHotel + " : On " + cheapDate + " the price for " + cheapCity + " is $" + cheapPrice);
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
