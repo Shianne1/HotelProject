@@ -1,8 +1,8 @@
 # Hotel Project
 A program that will automatically store and analyze the price of hotel rooms of five hotel franchises of your choice in five cities of choice through testing. 
-It will then find the ten dates with the lowest price for a room in each of the hotels from each of the cities. It will gather the data of 1-night stays from May 1st until December 31st.
+It will then find the ten dates with the lowest price for a room in each of the hotels from each of the cities. It will gather the data of 1-night stays from May 7th until December 31st.
 
-<b>The travel website I used:</b> https://www.getaroom.com/
+<b>The travel website I used:</b> [https://www.getaroom.com/search?](https://www.getaroom.com/search?)
 
 ## These are the 5 cities that were chosen:
 <ul>
@@ -19,7 +19,7 @@ It will then find the ten dates with the lowest price for a room in each of the 
  <li>Hyatt Regency</li>
  <li>Hilton</li>
  <li>Comfort Suties</li>
- <li>Hampton Inn & Suites</li>
+ <li>Hampton Inn</li>
 </ul>
 
 ## Technologies used:
